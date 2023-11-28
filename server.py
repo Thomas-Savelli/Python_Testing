@@ -63,4 +63,5 @@ def purchasePlaces():
 
 @app.route('/logout')
 def logout():
+    flash.clear()
     return redirect(url_for('index'))
