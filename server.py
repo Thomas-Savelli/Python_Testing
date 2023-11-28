@@ -33,7 +33,7 @@ def showSummary():
         club = matching_clubs[0]
         return render_template('welcome.html', club=club, competitions=competitions)
     else:
-        flash("Désolé, cet email n'a pas été trouvé.")
+        flash("Sorry, this email was not found.")
         return render_template('index.html')
 
 

@@ -58,4 +58,4 @@ class TestEmailHandling:
         # Vérifie que le message flash spécifique n'est pas présent dans la session
         with client.session_transaction() as session:
             flash_messages = session.get('_flashes', [])
-            assert "Désolé, cet email n'a pas été trouvé." not in [message for category, message in flash_messages]
+            assert "Sorry, this email was not found." not in [message for category, message in flash_messages]
