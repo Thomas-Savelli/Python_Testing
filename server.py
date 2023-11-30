@@ -91,7 +91,10 @@ def purchasePlaces():
         return render_template('welcome.html', club=club, competitions=competitions,
                                message='Something went wrong-please try again')
 
-# TODO: Add route for points display
+@app.route('/pointsDisplay', methods=['GET'])
+def points_display():
+    clubs = loadClubs()
+    return render_template('points_display.html', clubs=clubs)
 
 
 @app.route('/logout')
