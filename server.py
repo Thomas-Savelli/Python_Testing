@@ -65,6 +65,12 @@ def purchasePlaces():
 
     if competition and club:
         places_available = int(competition.get('numberOfPlaces', 0))
+        points_available = int(club.get('points', 0))
+
+        # Vérification du nombre de places à réserver
+        if places_required > 12:
+            return render_template('booking.html', club=club, competition=competition,
+                                   message="You can't book more than 12 places for a competition.")
 
         # Vérification des points disponibles
         points_available = int(club.get('points', 0))
@@ -90,6 +96,7 @@ def purchasePlaces():
         flash("Something went wrong-please try again")
         return render_template('welcome.html', club=club, competitions=competitions,
                                message='Something went wrong-please try again')
+
 
 @app.route('/pointsDisplay', methods=['GET'])
 def points_display():
