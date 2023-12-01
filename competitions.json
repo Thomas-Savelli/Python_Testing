@@ -13,7 +13,12 @@
         {
             "name": "Open Ile Rousse",
             "date": "2023-12-22 13:30:00",
-            "numberOfPlaces": "25"
+            "numberOfPlaces": "40"
+        },
+        {
+            "name": "Open calvi",
+            "date": "2023-12-22 13:30:00",
+            "numberOfPlaces": "5"
         }
     ]
 }

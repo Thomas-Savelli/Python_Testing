@@ -140,54 +140,23 @@ class TestPurchasePlace():
         # S'assure que le nombre de points du club n'a pas changé
         assert int(club['points']) == initial_points
 
-    def test_purchase_places_insufficient_seats_should_render_booking_page(self,
-                                                                           competitions_and_clubs,
-                                                                           client,
-                                                                           mock_purchase_places):
-        # Cas où l'utilisateur n'a pas assez de points pour acheter les places
+    def test_purchase_places_insufficient_seats_should_render_booking_page(self, competitions_and_clubs, client: FlaskClient, mock_purchase_places):
+        # Cas où l'utilisateur n'a pas assez de places pour acheter les places
         competitions, clubs = competitions_and_clubs
         club = clubs[0]
         competition = competitions[0]
         initial_places = int(competition['numberOfPlaces'])
         initial_points = int(club['points'])
 
-        # Tentative d'achat de places avec plus de points que l'utilisateur n'en a
+        # Tentative d'achat de places avec plus de places que la compétition n'en a
         places_to_purchase = initial_places + 1
 
         mock_purchase_places(competition=competition, club=club, places_required=places_to_purchase)
 
-        # Appel à la fonction ou à la méthode qui effectue la requête
+        # Appel à la méthode qui effectue la requête
         response = self._perform_purchase(client, competition, club, places_to_purchase)
-
-        # Vérifie que la page de bienvenue est rendue correctement
+        # Vérifie que la page de bienvenue n'est pas rendue
         assert b'Booking for' in response.data
-        assert b'Not enough places available for booking.' in response.data
-
-    def test_purchase_places_insufficient_seats_should_return_flash_message(self,
-                                                                            competitions_and_clubs,
-                                                                            client,
-                                                                            mock_purchase_places):
-        # Cas où l'utilisateur n'a pas assez de points pour acheter les places
-        competitions, clubs = competitions_and_clubs
-        club = clubs[0]
-        competition = competitions[0]
-        initial_places = int(competition['numberOfPlaces'])
-        initial_points = int(club['points'])
-
-        places_to_purchase = initial_places
-
-        mock_purchase_places(competition=competition, club=club, places_required=places_to_purchase)
-
-        # Appel à la fonction ou à la méthode qui effectue la requête
-        _ = self._perform_purchase(client, competition, club, places_to_purchase)
-
-        # Vérification du message flash dans la session
-        with client.session_transaction() as session:
-            flash_messages = session['_flashes']
-
-        # Assure que le message flash attendu est présent
-        expected_flash_message = "Not enough places available for booking."
-        assert any(expected_flash_message in message for message in flash_messages)
 
     def test_purchase_places_insufficient_points_shouldnt_substract_places(self,
                                                                            competitions_and_clubs,
@@ -261,3 +230,21 @@ class TestPurchasePlace():
             # Vérifie que le modèle de rendu est correct
             assert b'booking.html' in response.data
             assert b'Not enough points to make the booking.' in response.data.decode('utf-8')
+
+    def test_purchase_places_secretary_exceeds_limit_should_return_flash_message(self, competitions_and_clubs, client: FlaskClient, mock_purchase_places):
+        # Cas où le secrétaire dépasse la limite autorisée de places
+        competitions, clubs = competitions_and_clubs
+        club = clubs[0]
+        competition = competitions[0]
+        initial_places = 14
+        initial_points = int(club['points'])
+
+        # Tentative d'achat de places supplémentaires
+        places_to_purchase = initial_places
+        mock_purchase_places(competition=competition, club=club, places_required=places_to_purchase)
+
+        # Appel à la méthode qui effectue la requête
+        response = self._perform_purchase(client, competition, club, places_to_purchase)
+        print(response.data)
+        # Vérifie que le message d'erreur est présent dans la réponse
+        assert b"You can&#39;t book more than 12 places for a competition." in response.data

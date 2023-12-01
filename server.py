@@ -20,6 +20,7 @@ app.secret_key = 'something_special'
 
 competitions = loadCompetitions()
 clubs = loadClubs()
+secretary_reservations = {}
 
 
 @app.route('/')
@@ -75,8 +76,20 @@ def purchasePlaces():
         # Vérification des points disponibles
         points_available = int(club.get('points', 0))
 
+        # Vérification si le secrétaire a déjà réservé des places pour cette compétition et ce club
+        reservation_key = f"{competition_name}_{club_name}"
+        secretary_reservation_count = secretary_reservations.get(reservation_key, 0)
+
+        if secretary_reservation_count + places_required > 12:
+            flash("Secretary can't book more than 12 places for a competition and club combination.")
+            return render_template('welcome.html', club=club, competitions=competitions,
+                                   message="Secretary can't book more\
+                                            than 12 places for a competition and club combination.")
+
         if places_available >= places_required:
             if points_available >= places_required:
+                # Ajouter la réservation à secretary_reservations
+                secretary_reservations[reservation_key] = secretary_reservation_count + places_required
                 # Déduction des points
                 club['points'] = str(points_available - places_required)
 
@@ -100,7 +113,7 @@ def purchasePlaces():
 
 @app.route('/pointsDisplay', methods=['GET'])
 def points_display():
-    clubs = loadClubs()
+    global clubs
     return render_template('points_display.html', clubs=clubs)
 
 
