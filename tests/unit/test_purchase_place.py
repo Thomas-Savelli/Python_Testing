@@ -245,6 +245,6 @@ class TestPurchasePlace():
 
         # Appel à la méthode qui effectue la requête
         response = self._perform_purchase(client, competition, club, places_to_purchase)
-        print(response.data)
+
         # Vérifie que le message d'erreur est présent dans la réponse
         assert b"You can&#39;t book more than 12 places for a competition." in response.data

@@ -19,7 +19,7 @@ class TestPointsUpdateReflected():
     def mock_purchase_places(self, monkeypatch):
         def _mock_purchase_places(competition, club, places_required):
             if places_required <= int(club['points']):
-                # L'utilisateur a suffisamment de points, effectuez l'achat
+                # L'utilisateur a suffisamment de points, effectue l'achat
                 club['points'] = str(int(club['points']) - places_required)
                 competition['numberOfPlaces'] = str(int(competition['numberOfPlaces']) - places_required)
 

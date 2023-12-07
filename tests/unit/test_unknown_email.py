@@ -38,15 +38,15 @@ class TestEmailHandling:
         # et cela permet de supprimer l'avertissement de flake8."""
         _ = client.post('/showSummary', data=invalid_email_data, follow_redirects=True)
 
-        # Définissez une session temporaire pour simuler le comportement de la session
+        # Définis une session temporaire pour simuler le comportement de la session
         with client.session_transaction() as sess:
             sess['_flashes'] = [('message', "Désolé, cet email n'a pas été trouvé.")]
 
-        # Réalisez maintenant votre vérification
+        # Réalise la vérification
         with client.session_transaction() as session:
             flash_messages = session['_flashes']
 
-        # Assurez-vous que le message flash attendu est présent
+        # S'assure que le message flash attendu est présent
         expected_flash_message = "Désolé, cet email n'a pas été trouvé."
         assert any(expected_flash_message in message for message in flash_messages)
 
