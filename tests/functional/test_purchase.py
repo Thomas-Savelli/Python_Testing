@@ -7,7 +7,9 @@ from selenium.webdriver.common.by import By
 
 @pytest.fixture
 def driver():
-    driver = webdriver.Chrome()
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    driver = webdriver.Chrome(options=options)
     yield driver
     driver.quit()
 
